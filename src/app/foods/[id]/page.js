@@ -3,28 +3,57 @@
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getFoodDetail } from "@/services/food";
+import { addCart } from "@/services/cart";
 import { formatRupiah } from "@/utils/formatRupiah";
 
 const PLACEHOLDER_IMAGE = "/images/placeholder.png";
 
 export default function FoodDetail({ params }) {
-  const resolvedParams = use(params);
-  const id = resolvedParams.id;
+  const { id } = use(params);
+  const router = useRouter();
 
   const [food, setFood] = useState(null);
   const [imageSrc, setImageSrc] = useState(PLACEHOLDER_IMAGE);
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     async function loadDetail() {
-      const res = await getFoodDetail(id);
-      const item = res.data || res;
-      setFood(item);
-      setImageSrc(item?.imageUrl || PLACEHOLDER_IMAGE);
+      try {
+        const res = await getFoodDetail(id);
+        const item = res.data || res;
+        setFood(item);
+        setImageSrc(item?.imageUrl || PLACEHOLDER_IMAGE);
+      } catch (error) {
+        console.error("Failed to load food detail", error);
+      }
     }
 
     loadDetail();
   }, [id]);
+
+  async function handleAddCart() {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
+    setSubmitting(true);
+    setMessage("");
+
+    try {
+      await addCart(id);
+      setMessage("Menu berhasil ditambahkan ke keranjang.");
+    } catch (error) {
+      console.error("Failed to add to cart", error);
+      setMessage("Tidak dapat menambahkan menu ke keranjang.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   if (!food) {
     return <p className="p-6 text-slate-500">Loading detail menu...</p>;
@@ -67,9 +96,19 @@ export default function FoodDetail({ params }) {
             <p className="mt-2 text-sm text-slate-600">Rasa yang autentik, porsi yang memuaskan, dan tampilan yang menggugah selera. Cocok untuk user yang ingin menikmati makanan favorit dengan cepat.</p>
           </div>
 
+          {message ? <div className="mt-6 rounded-3xl bg-emerald-50 p-4 text-sm text-emerald-700">{message}</div> : null}
+
           <div className="mt-8 flex flex-wrap gap-3">
-            <button className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-amber-500">Tambah ke cart</button>
-            <Link href="/cart" className="rounded-full border border-amber-200 px-5 py-3 text-sm font-semibold text-amber-700 hover:bg-amber-50">Lihat cart</Link>
+            <button
+              onClick={handleAddCart}
+              disabled={submitting}
+              className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-amber-500 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {submitting ? "Menambahkan..." : "Tambah ke cart"}
+            </button>
+            <Link href="/cart" className="rounded-full border border-amber-200 px-5 py-3 text-sm font-semibold text-amber-700 hover:bg-amber-50">
+              Lihat cart
+            </Link>
           </div>
         </article>
       </div>

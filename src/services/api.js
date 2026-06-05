@@ -20,6 +20,24 @@ export async function fetchAPI(endpoint, options = {}) {
     },
   });
 
-  const data = await res.json();
-  return data;
+  const text = await res.text();
+  const contentType = res.headers.get("content-type") || "";
+  const baseResponse = {
+    status: res.status,
+    ok: res.ok,
+  };
+
+  if (contentType.includes("application/json")) {
+    try {
+      const parsed = JSON.parse(text);
+      if (Array.isArray(parsed)) {
+        return { data: parsed, ...baseResponse };
+      }
+      return { ...parsed, ...baseResponse };
+    } catch (error) {
+      return { message: text, ...baseResponse };
+    }
+  }
+
+  return { message: text, ...baseResponse };
 }

@@ -3,13 +3,17 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getTokenRole } from "@/utils/jwt";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    setIsLoggedIn(Boolean(localStorage.getItem("token")));
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(Boolean(token));
+    setIsAdmin(getTokenRole(token) === "admin");
   }, []);
 
   function handleLogout() {
@@ -29,6 +33,15 @@ export default function Navbar() {
         <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
           <Link href="/" className="rounded-full px-3 py-2 hover:bg-amber-50">Home</Link>
           <Link href="/cart" className="rounded-full px-3 py-2 hover:bg-amber-50">Cart</Link>
+          {isLoggedIn && (
+            <>
+              <Link href="/profile" className="rounded-full px-3 py-2 hover:bg-amber-50">Profile</Link>
+              <Link href="/transactions" className="rounded-full px-3 py-2 hover:bg-amber-50">Transactions</Link>
+            </>
+          )}
+          {isAdmin && (
+            <Link href="/admin" className="rounded-full px-3 py-2 hover:bg-amber-50">Admin</Link>
+          )}
           {isLoggedIn ? (
             <button
               onClick={handleLogout}

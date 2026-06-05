@@ -38,6 +38,18 @@ export default function LoginPage() {
 
     if (token) {
       localStorage.setItem("token", token);
+      const tokenProfile = parseJwt(token);
+      const profileData =
+        res.user ||
+        res.data?.user ||
+        (res.data && (res.data.name || res.data.fullName || res.data.username || res.data.email) ? res.data : null) ||
+        (tokenProfile && (tokenProfile.name || tokenProfile.fullName || tokenProfile.username || tokenProfile.email)
+          ? tokenProfile
+          : null);
+
+      if (profileData && typeof profileData === "object") {
+        localStorage.setItem("userProfile", JSON.stringify(profileData));
+      }
       setToast({ message: "Login berhasil!", type: "success" });
       window.setTimeout(() => router.push("/"), 1200);
       return;
@@ -61,7 +73,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`mt-2 w-full rounded-2xl border px-4 py-3 text-slate-900 outline-none transition ${errorField === "email" ? "border-rose-500 ring-2 ring-rose-100" : "border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
+              className={`mt-2 w-full rounded-2xl border px-4 py-3 text-slate-900 outline-none transition ${errorField === "email" ? "border-rose-500 ring-2 ring-rose-100" : "border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"}`}
               placeholder="contoh@domain.com"
             />
           </label>
@@ -73,17 +85,17 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`mt-2 w-full rounded-2xl border px-4 py-3 text-slate-900 outline-none transition ${errorField === "password" ? "border-rose-500 ring-2 ring-rose-100" : "border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
+              className={`mt-2 w-full rounded-2xl border px-4 py-3 text-slate-900 outline-none transition ${errorField === "password" ? "border-rose-500 ring-2 ring-rose-100" : "border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"}`}
               placeholder="Masukkan password kamu"
             />
           </label>
 
-          <button type="submit" className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-95">
+          <button type="submit" className="w-full rounded-2xl bg-amber-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-amber-600 hover:opacity-95">
             Login sekarang
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-500">Belum punya akun? <a href="/register" className="font-semibold text-primary hover:underline">Daftar sekarang</a></p>
+        <p className="mt-6 text-center text-sm text-slate-500">Belum punya akun? <a href="/register" className="font-semibold text-amber-600 hover:underline">Daftar sekarang</a></p>
       </div>
 
       <Toast message={toast.message} type={toast.type} onClose={() => setToast({ message: "", type: "success" })} />
