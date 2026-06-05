@@ -4,17 +4,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import { getFoodDetail } from "@/services/food";
+import { formatRupiah } from "@/utils/formatRupiah";
+
+const PLACEHOLDER_IMAGE = "/images/placeholder.png";
 
 export default function FoodDetail({ params }) {
   const resolvedParams = use(params);
   const id = resolvedParams.id;
 
   const [food, setFood] = useState(null);
+  const [imageSrc, setImageSrc] = useState(PLACEHOLDER_IMAGE);
 
   useEffect(() => {
     async function loadDetail() {
       const res = await getFoodDetail(id);
-      setFood(res.data || res);
+      const item = res.data || res;
+      setFood(item);
+      setImageSrc(item?.imageUrl || PLACEHOLDER_IMAGE);
     }
 
     loadDetail();
@@ -30,12 +36,17 @@ export default function FoodDetail({ params }) {
         <article className="overflow-hidden rounded-[32px] border border-amber-100 bg-white shadow-sm">
           <div className="relative h-72 w-full lg:h-[420px]">
             <Image
-              src={food.imageUrl || "https://via.placeholder.com/900x600"}
+              src={imageSrc}
               alt={food.name}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
               unoptimized
+              onError={() => {
+                if (imageSrc !== PLACEHOLDER_IMAGE) {
+                  setImageSrc(PLACEHOLDER_IMAGE);
+                }
+              }}
             />
           </div>
         </article>
@@ -46,7 +57,7 @@ export default function FoodDetail({ params }) {
           <p className="mt-4 text-slate-600">{food.description || "Menu yang lezat, segar, dan cocok untuk segala suasana."}</p>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <span className="rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-700">Rp {food.price}</span>
+            <span className="rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-700">{formatRupiah(food.price)}</span>
             <span className="rounded-full bg-slate-100 px-4 py-2 text-sm text-slate-700">Kategori: {food.category || "Food"}</span>
             <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm text-emerald-700">Rating: 4.8</span>
           </div>

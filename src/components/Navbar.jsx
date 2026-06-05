@@ -1,6 +1,23 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    setIsLoggedIn(Boolean(localStorage.getItem("token")));
+  }, []);
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    router.push("/");
+  }
+
   return (
     <header className="sticky top-0 z-20 border-b border-amber-100 bg-white/90 backdrop-blur">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
@@ -12,8 +29,19 @@ export default function Navbar() {
         <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
           <Link href="/" className="rounded-full px-3 py-2 hover:bg-amber-50">Home</Link>
           <Link href="/cart" className="rounded-full px-3 py-2 hover:bg-amber-50">Cart</Link>
-          <Link href="/login" className="rounded-full bg-slate-900 px-4 py-2 text-white hover:bg-slate-700">Login</Link>
-          <Link href="/register" className="rounded-full border border-amber-200 px-4 py-2 text-amber-700 hover:bg-amber-50">Register</Link>
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="rounded-full bg-slate-900 px-4 py-2 text-white hover:bg-slate-700"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link href="/login" className="rounded-full bg-slate-900 px-4 py-2 text-white hover:bg-slate-700">Login</Link>
+              <Link href="/register" className="rounded-full border border-amber-200 px-4 py-2 text-amber-700 hover:bg-amber-50">Register</Link>
+            </>
+          )}
         </div>
       </nav>
     </header>

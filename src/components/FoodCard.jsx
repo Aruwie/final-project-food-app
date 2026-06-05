@@ -1,18 +1,29 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { formatRupiah } from "@/utils/formatRupiah";
+
+const PLACEHOLDER_IMAGE = "/images/placeholder.png";
 
 export default function FoodCard({ food }) {
+  const [imageSrc, setImageSrc] = useState(food.imageUrl || PLACEHOLDER_IMAGE);
+
   return (
     <Link href={`/foods/${food.id}`} className="group block h-full">
-      <article className="h-full overflow-hidden rounded-3xl border border-amber-100 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-xl">
+      <article className="h-full overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-xl">
         <div className="relative h-44 w-full overflow-hidden">
           <Image
-            src={food.imageUrl || "https://via.placeholder.com/600x400"}
+            src={imageSrc}
             alt={food.name}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
             className="object-cover transition duration-300 group-hover:scale-105"
             unoptimized
+            onError={() => {
+              if (imageSrc !== PLACEHOLDER_IMAGE) {
+                setImageSrc(PLACEHOLDER_IMAGE);
+              }
+            }}
           />
         </div>
 
@@ -20,14 +31,14 @@ export default function FoodCard({ food }) {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-xs uppercase tracking-[0.25em] text-amber-500">Popular</p>
-              <h2 className="text-xl font-bold text-slate-900">{food.name}</h2>
+              <h2 className="text-xl font-bold text-slate-950">{food.name}</h2>
             </div>
-            <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-700">Rp {food.price}</span>
+            <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-700">{formatRupiah(food.price)}</span>
           </div>
 
           <p className="text-sm text-slate-600 line-clamp-2">{food.description || "Nikmati cita rasa yang hangat, segar, dan memuaskan."}</p>
 
-          <button className="w-full rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-500">
+          <button className="w-full rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-400">
             Lihat detail
           </button>
         </div>

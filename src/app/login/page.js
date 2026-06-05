@@ -1,60 +1,92 @@
-"use client";
+﻿"use client";
 
-import { useState } from "react";
-import { login } from "@/services/auth";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { login } from "@/services/auth";
+import Toast from "@/components/Toast";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [toast, setToast] = useState({ message: "", type: "success" });
+  const [errorField, setErrorField] = useState("");
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!toast.message) return;
+    const timer = window.setTimeout(() => setToast({ message: "", type: "success" }), 3000);
+    return () => window.clearTimeout(timer);
+  }, [toast.message]);
+
+  function showError(message, field) {
+    setToast({ message, type: "error" });
+    setErrorField(field);
+    if (field === "email") emailRef.current?.focus();
+    if (field === "password") passwordRef.current?.focus();
+  }
 
   async function handleLogin(e) {
     e.preventDefault();
 
-    console.log("CLICKED LOGIN");
+    if (!email) return showError("Email harus diisi.", "email");
+    if (!password) return showError("Password harus diisi.", "password");
 
     const res = await login({ email, password });
-    console.log("LOGIN RESULT:", res);
-
     const token = res.token || res.data?.token;
 
     if (token) {
       localStorage.setItem("token", token);
-      router.push("/");
-    } else {
-      alert("Login gagal");
+      setToast({ message: "Login berhasil!", type: "success" });
+      window.setTimeout(() => router.push("/"), 1200);
+      return;
     }
+
+    const message = res.message || "Login gagal. Periksa email dan password.";
+    showError(message, "password");
   }
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      <h1 className="text-xl font-bold mb-4">Login</h1>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.2),_transparent_35%),_linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] py-14">
+      <div className="mx-auto max-w-md rounded-[32px] border border-slate-200 bg-white p-8 shadow-xl">
+        <h1 className="text-3xl font-black text-slate-900">Login</h1>
+        <p className="mt-2 text-sm text-slate-500">Masuk untuk melanjutkan dan lihat menu makanan terbaru.</p>
 
-      <form onSubmit={handleLogin} className="flex flex-col gap-3">
-        <input
-          type="email"
-          placeholder="Email"
-          className="border p-2 rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <form onSubmit={handleLogin} className="mt-8 space-y-4">
+          <label className="block text-sm font-semibold text-slate-700">
+            Email
+            <input
+              ref={emailRef}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`mt-2 w-full rounded-2xl border px-4 py-3 text-slate-900 outline-none transition ${errorField === "email" ? "border-rose-500 ring-2 ring-rose-100" : "border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
+              placeholder="contoh@domain.com"
+            />
+          </label>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="border p-2 rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <label className="block text-sm font-semibold text-slate-700">
+            Password
+            <input
+              ref={passwordRef}
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`mt-2 w-full rounded-2xl border px-4 py-3 text-slate-900 outline-none transition ${errorField === "password" ? "border-rose-500 ring-2 ring-rose-100" : "border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
+              placeholder="Masukkan password kamu"
+            />
+          </label>
 
-        <button
-          type="submit"
-          className="bg-black text-white p-2 rounded"
-        >
-          Login
-        </button>
-      </form>
+          <button type="submit" className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:opacity-95">
+            Login sekarang
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-slate-500">Belum punya akun? <a href="/register" className="font-semibold text-primary hover:underline">Daftar sekarang</a></p>
+      </div>
+
+      <Toast message={toast.message} type={toast.type} onClose={() => setToast({ message: "", type: "success" })} />
     </div>
   );
 }
