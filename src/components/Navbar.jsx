@@ -48,7 +48,6 @@ export default function Navbar() {
     <header className="sticky top-0 z-20 border-b-3 border-primary bg-white backdrop-blur">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
 
-        {/* LOGO FIX */}
         <Link href="/">
           <img src="/images/logo.png" alt="logo" className="h-6 w-auto" />
         </Link>
