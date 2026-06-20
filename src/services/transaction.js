@@ -34,3 +34,18 @@ export async function updateTransactionStatus(transactionId, status) {
     body: JSON.stringify({ status }),
   });
 }
+
+/**
+ * ADMIN ONLY
+ * Get all transactions for admin dashboard
+ */
+export async function getAllTransactions() {
+  const res = await fetchAPI("/all-transactions");
+
+  // fallback kalau endpoint berbeda di backend
+  if (res?.status === 404 || res?.status === 401) {
+    return fetchAPI("/transactions");
+  }
+
+  return res;
+}

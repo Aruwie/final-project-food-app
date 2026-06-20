@@ -13,15 +13,15 @@ export default function Navbar() {
   function updateAuthState() {
     const token = localStorage.getItem("token");
 
-    setIsLoggedIn(Boolean(token));
+    setIsLoggedIn(!!token);
     setIsAdmin(getTokenRole(token) === "admin");
   }
 
   useEffect(() => {
-    // initial load
+    // initial check
     updateAuthState();
 
-    // listen perubahan login
+    // sync antar tab + custom event
     const handleAuthChange = () => updateAuthState();
 
     window.addEventListener("auth-change", handleAuthChange);
@@ -47,8 +47,10 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-20 border-b-3 border-primary bg-white backdrop-blur">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+
+        {/* LOGO FIX */}
         <Link href="/">
-          <img src="images/logo.png" alt="logo" className="h-6 w-auto" />
+          <img src="/images/logo.png" alt="logo" className="h-6 w-auto" />
         </Link>
 
         <div className="flex items-center gap-3 text-sm font-semibold text-text">
@@ -64,19 +66,13 @@ export default function Navbar() {
           )}
 
           {isLoggedIn && !isAdmin && (
-            <Link
-              href="/transactions"
-              className="rounded-full px-3 py-2 hover:bg-primary hover:text-white"
-            >
+            <Link href="/transactions" className="rounded-full px-3 py-2 hover:bg-primary hover:text-white">
               Transactions
             </Link>
           )}
 
           {isAdmin && (
-            <Link
-              href="/admin"
-              className="rounded-full px-3 py-2 hover:bg-primary hover:text-white"
-            >
+            <Link href="/admin" className="rounded-full px-3 py-2 hover:bg-primary hover:text-white">
               Admin
             </Link>
           )}
@@ -90,16 +86,10 @@ export default function Navbar() {
             </button>
           ) : (
             <>
-              <Link
-                href="/login"
-                className="rounded-full bg-primary px-4 py-2 text-white hover:bg-secondary"
-              >
+              <Link href="/login" className="rounded-full bg-primary px-4 py-2 text-white hover:bg-secondary">
                 Login
               </Link>
-              <Link
-                href="/register"
-                className="rounded-full border-2 border-primary px-4 py-2 text-primary hover:bg-primary hover:text-white"
-              >
+              <Link href="/register" className="rounded-full border-2 border-primary px-4 py-2 text-primary hover:bg-primary hover:text-white">
                 Register
               </Link>
             </>
