@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "YumFood | Food App",
+  title: "Isekai Food",
   description: "Checkpoint 1 final project food app built with Next.js and Tailwind.",
 };
 
