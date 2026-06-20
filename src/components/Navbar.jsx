@@ -23,36 +23,38 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-amber-100 bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b-3 border-primary bg-white backdrop-blur">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2 text-xl font-black text-amber-600">
-          <span className="rounded-xl bg-amber-500 px-2 py-1 text-white">🍜</span>
-          YumFood
+        <Link href="/">
+          <img src="images/logo.png" alt="logo" className="h-6 w-auto" />
         </Link>
 
-        <div className="flex items-center gap-3 text-sm font-semibold text-slate-700">
-          <Link href="/" className="rounded-full px-3 py-2 hover:bg-amber-50">Home</Link>
-          <Link href="/cart" className="rounded-full px-3 py-2 hover:bg-amber-50">Cart</Link>
-          {isLoggedIn && (
+        <div className="flex items-center gap-3 text-sm font-semibold text-text">
+          {!isAdmin && (
             <>
-              <Link href="/profile" className="rounded-full px-3 py-2 hover:bg-amber-50">Profile</Link>
-              <Link href="/transactions" className="rounded-full px-3 py-2 hover:bg-amber-50">Transactions</Link>
+              <Link href="/" className="rounded-full px-3 py-2 hover:bg-primary hover:text-white">Home</Link>
+              <Link href="/cart" className="rounded-full px-3 py-2 hover:bg-primary hover:text-white">Cart</Link>
+            </>
+          )}
+          {isLoggedIn && !isAdmin &&(
+            <>
+              <Link href="/transactions" className="rounded-full px-3 py-2 hover:bg-primary hover:text-white">Transactions</Link>
             </>
           )}
           {isAdmin && (
-            <Link href="/admin" className="rounded-full px-3 py-2 hover:bg-amber-50">Admin</Link>
+            <Link href="/admin" className="rounded-full px-3 py-2 hover:bg-primary hover:text-white">Admin</Link>
           )}
           {isLoggedIn ? (
             <button
               onClick={handleLogout}
-              className="rounded-full bg-slate-900 px-4 py-2 text-white hover:bg-slate-700"
+              className="rounded-full bg-primary px-4 py-2 text-white hover:bg-secondary"
             >
               Logout
             </button>
           ) : (
             <>
-              <Link href="/login" className="rounded-full bg-slate-900 px-4 py-2 text-white hover:bg-slate-700">Login</Link>
-              <Link href="/register" className="rounded-full border border-amber-200 px-4 py-2 text-amber-700 hover:bg-amber-50">Register</Link>
+              <Link href="/login" className="rounded-full bg-primary px-4 py-2 text-white hover:bg-secondary">Login</Link>
+              <Link href="/register" className="rounded-full border-2 border-primary px-4 py-2 text-primary hover:bg-primary hover:text-white">Register</Link>
             </>
           )}
         </div>

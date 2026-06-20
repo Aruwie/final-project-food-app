@@ -1,0 +1,7 @@
+User
+user@test.com
+123456
+
+Admin
+admin@admin.com
+admin123

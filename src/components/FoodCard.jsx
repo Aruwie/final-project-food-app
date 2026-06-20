@@ -30,15 +30,15 @@ export default function FoodCard({ food }) {
         <div className="space-y-3 p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-xs uppercase tracking-[0.25em] text-amber-500">Popular</p>
-              <h2 className="text-xl font-bold text-slate-950">{food.name}</h2>
+              <p className="text-xs uppercase tracking-[0.25em] text-primary">Popular</p>
+              <h2 className="text-xl font-bold text-text">{food.name}</h2>
             </div>
-            <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-700">{formatRupiah(food.price)}</span>
+            <span className="rounded-full bg-textalt px-3 py-1 text-sm font-semibold text-primary">{formatRupiah(food.price)}</span>
           </div>
 
           <p className="text-sm text-slate-600 line-clamp-2">{food.description || "Nikmati cita rasa yang hangat, segar, dan memuaskan."}</p>
 
-          <button className="w-full rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-400">
+          <button className="w-full rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-textalt hover:text-primary">
             Lihat detail
           </button>
         </div>

@@ -60,7 +60,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(251,191,36,0.2),_transparent_35%),_linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] py-14">
+    <div className="min-h-screen bg-[#f6fbff] py-14">
       <div className="mx-auto max-w-md rounded-[32px] border border-slate-200 bg-white p-8 shadow-xl">
         <h1 className="text-3xl font-black text-slate-900">Login</h1>
         <p className="mt-2 text-sm text-slate-500">Masuk untuk melanjutkan dan lihat menu makanan terbaru.</p>
@@ -73,7 +73,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`mt-2 w-full rounded-2xl border px-4 py-3 text-slate-900 outline-none transition ${errorField === "email" ? "border-rose-500 ring-2 ring-rose-100" : "border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"}`}
+              className={`mt-2 w-full rounded-2xl border px-4 py-3 text-slate-900 outline-none transition ${errorField === "email" ? "border-rose-500 ring-2 ring-rose-100" : "border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
               placeholder="contoh@domain.com"
             />
           </label>
@@ -85,17 +85,17 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`mt-2 w-full rounded-2xl border px-4 py-3 text-slate-900 outline-none transition ${errorField === "password" ? "border-rose-500 ring-2 ring-rose-100" : "border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20"}`}
+              className={`mt-2 w-full rounded-2xl border px-4 py-3 text-slate-900 outline-none transition ${errorField === "password" ? "border-rose-500 ring-2 ring-rose-100" : "border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
               placeholder="Masukkan password kamu"
             />
           </label>
 
-          <button type="submit" className="w-full rounded-2xl bg-amber-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-amber-600 hover:opacity-95">
+          <button type="submit" className="w-full rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white transition hover:bg-primary hover:opacity-80">
             Login sekarang
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-500">Belum punya akun? <a href="/register" className="font-semibold text-amber-600 hover:underline">Daftar sekarang</a></p>
+        <p className="mt-6 text-center text-sm text-slate-500">Belum punya akun? <a href="/register" className="font-semibold text-primary hover:underline">Daftar sekarang</a></p>
       </div>
 
       <Toast message={toast.message} type={toast.type} onClose={() => setToast({ message: "", type: "success" })} />

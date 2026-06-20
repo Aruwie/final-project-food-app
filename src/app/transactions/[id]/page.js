@@ -136,18 +136,18 @@ export default function TransactionDetailPage({ params }) {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[linear-gradient(180deg,#fffaf5_0%,#ffffff_45%,#fff7ed_100%)] p-6 text-slate-900">
-        <div className="mx-auto max-w-5xl rounded-[32px] border border-amber-100 bg-white p-8 shadow-sm">Memuat detail transaksi...</div>
+      <main className="min-h-screen bg-[#f6fbff] p-6 text-slate-900">
+        <div className="mx-auto max-w-5xl rounded-[32px] border border-primary bg-white p-8 shadow-sm">Memuat detail transaksi...</div>
       </main>
     );
   }
 
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#fffaf5_0%,#ffffff_45%,#fff7ed_100%)] p-6 text-slate-900">
-      <section className="mx-auto max-w-5xl rounded-[32px] border border-amber-100 bg-white p-8 shadow-sm">
+      <section className="mx-auto max-w-5xl rounded-[32px] border border-primary bg-white p-8 shadow-sm">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.35em] text-amber-500">Transaction Detail</p>
+            <p className="text-sm uppercase tracking-[0.35em] text-primary">Transaction Detail</p>
             <h1 className="mt-2 text-3xl font-black text-slate-900">Detail Pesanan</h1>
           </div>
           <Link href="/transactions" className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">
@@ -235,7 +235,7 @@ export default function TransactionDetailPage({ params }) {
 
               <div className="mt-5 space-y-4">
                 {items.length === 0 ? (
-                  <div className="rounded-3xl border border-dashed border-amber-200 bg-amber-50 p-6 text-center text-slate-700">
+                  <div className="rounded-3xl border border-dashed border-primary bg-textalt p-6 text-center text-slate-700">
                     Tidak ada detail item yang tersedia untuk transaksi ini.
                   </div>
                 ) : (
@@ -268,7 +268,7 @@ export default function TransactionDetailPage({ params }) {
                   <p className="text-base font-semibold text-slate-900">Total Pembayaran</p>
                   <p className="text-sm text-slate-500">Termasuk semua item transaksi.</p>
                 </div>
-                <p className="text-3xl font-black text-amber-600">{formatRupiah(total)}</p>
+                <p className="text-3xl font-black text-primary">{formatRupiah(total)}</p>
               </div>
             </div>
           </div>

@@ -140,11 +140,11 @@ export default function CartPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[linear-gradient(180deg,#fffaf5_0%,#ffffff_45%,#fff7ed_100%)] p-6 text-slate-900">
-      <section className="mx-auto max-w-6xl rounded-[32px] border border-amber-100 bg-white p-8 shadow-sm">
+    <main className="min-h-screen bg-[#f6fbff] p-6 text-slate-900">
+      <section className="mx-auto max-w-6xl rounded-[32px] border border-primary bg-white p-8 shadow-sm">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-sm uppercase tracking-[0.35em] text-amber-500">Keranjang</p>
+            <p className="text-sm uppercase tracking-[0.35em] text-primary">Keranjang</p>
             <h1 className="mt-2 text-3xl font-black text-slate-900">Keranjang belanja</h1>
             <p className="mt-3 text-slate-600">Kelola item dan lakukan checkout untuk memproses pesanan kamu.</p>
           </div>
@@ -155,7 +155,7 @@ export default function CartPage() {
         </div>
 
         {!isLoggedIn ? (
-          <div className="mt-10 rounded-3xl border border-amber-100 bg-amber-50 p-8 text-center text-slate-700">
+          <div className="mt-10 rounded-3xl border border-primary bg-textalt p-8 text-center text-slate-700">
             <p className="text-xl font-semibold">Login terlebih dahulu untuk melihat keranjang.</p>
             <p className="mt-2 text-sm">Jika sudah punya akun, login untuk melanjutkan belanja dan checkout.</p>
             <div className="mt-6 flex justify-center gap-3">
@@ -169,7 +169,7 @@ export default function CartPage() {
           <div className="mt-10 grid gap-8 lg:grid-cols-[2fr_1fr]">
             <div className="space-y-4">
               {normalizedCarts.length === 0 ? (
-                <div className="rounded-3xl border border-dashed border-amber-200 bg-amber-50 p-8 text-center text-slate-700">
+                <div className="rounded-3xl border border-dashed border-primary bg-textalt p-8 text-center text-slate-700">
                   <p className="text-lg font-semibold">Keranjangmu masih kosong.</p>
                   <p className="mt-2 text-sm">Tambahkan menu favorit melalui detail makanan atau homepage.</p>
                   <Link href="/" className="mt-5 inline-flex rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800">Kembali ke menu</Link>
@@ -224,7 +224,7 @@ export default function CartPage() {
 
             <aside className="space-y-6 rounded-[32px] border border-slate-200 bg-white p-6 shadow-sm">
               <div>
-                <p className="text-sm uppercase tracking-[0.35em] text-amber-500">Ringkasan</p>
+                <p className="text-sm uppercase tracking-[0.35em] text-primary">Ringkasan</p>
                 <div className="mt-5 space-y-3 rounded-3xl bg-slate-50 p-4 text-slate-700">
                   <div className="flex items-center justify-between text-sm">
                     <span>Subtotal</span>

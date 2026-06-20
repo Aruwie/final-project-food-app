@@ -100,24 +100,24 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-950">
       <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="overflow-hidden rounded-[32px] bg-slate-950 shadow-2xl ring-1 ring-white/10">
+        <div className="overflow-hidden rounded-[32px] bg-primary shadow-2xl ring-1 ring-white/10">
           <div className="px-6 py-10 lg:px-12 lg:py-14">
             <div className="space-y-6">
-              <p className="text-sm uppercase tracking-[0.35em] text-amber-300">Food App</p>
-              <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">Menu enak, cepat, dan jelas untuk setiap selera.</h1>
-              <p className="max-w-2xl text-slate-300">
-                Temukan nasi goreng, mie ayam, bakso, dan minuman favorit. Pesan lebih cepat dengan antarmuka yang sederhana dan fokus.
+              <h1 className="text-4xl font-black tracking-tight text-white sm:text-5xl">Menu from around the world, even from other world!</h1>
+              <p className="max-w-2xl text-white">
+                Find your Favorite food and order it now! We provide a variety of delicious dishes from different cuisines to satisfy your cravings. Enjoy the best food experience with us.
               </p>
 
               <div className="mt-10 grid gap-4 sm:grid-cols-3">
                 {[
-                  ["4.8/5", "Rating user"],
-                  ["10+", "Menu tersedia"],
-                  ["24/7", "Support order"],
-                ].map(([value, label]) => (
-                  <div key={label} className="rounded-3xl border border-white/10 bg-white/10 p-5">
-                    <p className="text-3xl font-black text-white">{value}</p>
-                    <p className="mt-2 text-sm text-slate-300">{label}</p>
+                  ["/images/delivery.png", "Otherworldly Delivery", "Fast delivery no matter the distance — whether you're across town or in another world."],
+                  ["/images/food.png", "Adventurer’s Menu", "Meals inspired by fantasy taverns and heroic feasts."],
+                  ["/images/quality.png", "Enchanted Quality", "Fresh ingredients crafted into magical flavors."],
+                ].map(([image, label, description]) => (
+                  <div key={label} className="rounded-3xl bg-white p-4 text-center">
+                    <img src={image} alt={label} className="mx-auto h-16 w-16 object-contain" />
+                    <p className="mt-2 text-sm text-primary font-bold">{label}</p>
+                    <p className="text-xs text-primary font-semibold">{description}</p>
                   </div>
                 ))}
               </div>
@@ -128,8 +128,8 @@ export default function Home() {
         <section id="menu" className="mt-10">
           <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.3em] text-amber-300">Menu list</p>
-              <h2 className="text-2xl font-bold text-slate-950">Pilih makanan favorit kamu</h2>
+              <p className="text-sm uppercase tracking-[0.3em] text-primary">Menu list</p>
+              <h2 className="text-2xl font-bold text-text">Pilih makanan favorit kamu</h2>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <p className="text-sm text-slate-500">{filteredFoods.length} item ditemukan</p>
@@ -143,7 +143,7 @@ export default function Home() {
           </div>
 
           {filteredFoods.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-amber-200 bg-white p-10 text-center text-slate-500">Belum ada menu yang cocok dengan pencarian saat ini.</div>
+            <div className="rounded-3xl border border-dashed border-primary bg-white p-10 text-center text-slate-500">Belum ada menu yang cocok dengan pencarian saat ini.</div>
           ) : (
             <>
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
