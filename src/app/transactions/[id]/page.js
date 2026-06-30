@@ -3,10 +3,12 @@
 import { use, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { getTransactionById, updateTransactionProofPayment } from "@/services/transaction";
+import { uploadImage } from "@/services/food";
 import { formatRupiah } from "@/utils/formatRupiah";
 
 function normalizeItems(transaction) {
   const items =
+    transaction.transaction_items ||
     transaction.items ||
     transaction.transactionItems ||
     transaction.orderItems ||
@@ -26,8 +28,8 @@ function normalizeItems(transaction) {
       id: item.id || item._id || item.itemId || item.cartId || item.foodId || index,
       name: food?.name || item.name || "Menu",
       quantity: item.quantity ?? item.qty ?? item.amount ?? 1,
-      price: food?.price ?? item.price ?? item.unitPrice ?? item.total ?? 0,
-      imageUrl: food?.imageUrl || food?.image || item.imageUrl || item.image || "",
+      price: item.price ?? food?.price ?? item.unitPrice ?? item.total ?? 0,
+      imageUrl: item.imageUrl || food?.imageUrl || food?.image || item.image || "",
     };
   });
 }
@@ -36,6 +38,7 @@ export default function TransactionDetailPage({ params }) {
   const { id } = use(params);
   const [transaction, setTransaction] = useState(null);
   const [proofPreview, setProofPreview] = useState("");
+  const [proofFile, setProofFile] = useState(null);
   const [proofUploading, setProofUploading] = useState(false);
   const [proofError, setProofError] = useState("");
   const [proofMessage, setProofMessage] = useState("");
@@ -70,35 +73,23 @@ export default function TransactionDetailPage({ params }) {
     loadTransaction();
   }, [id]);
 
-  function convertFileToDataUrl(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
   async function handleProofFileChange(event) {
     const file = event.target.files?.[0];
+
     if (!file) {
-      setProofPreview("");
+      setProofFile(null);
+      setProofPreview(transaction?.proofPaymentUrl || "");
       return;
     }
 
-    try {
-      const dataUrl = await convertFileToDataUrl(file);
-      setProofPreview(dataUrl);
-      setProofError("");
-      setProofMessage("");
-    } catch (err) {
-      console.error("Failed to read proof file", err);
-      setProofError("Gagal memuat file bukti pembayaran. Pastikan file valid.");
-    }
+    setProofFile(file);
+    setProofPreview(URL.createObjectURL(file));
+    setProofError("");
+    setProofMessage("");
   }
 
   async function handleUploadProof() {
-    if (!proofPreview) {
+    if (!proofFile) {
       setProofError("Pilih file bukti pembayaran terlebih dahulu.");
       return;
     }
@@ -108,18 +99,42 @@ export default function TransactionDetailPage({ params }) {
     setProofMessage("");
 
     try {
-      const res = await updateTransactionProofPayment(transactionId, proofPreview);
+      // Upload image
+      const uploadRes = await uploadImage(proofFile);
+
+      if (!uploadRes.ok) {
+        setProofError(uploadRes.message || "Gagal upload gambar.");
+        return;
+      }
+
+      const imageUrl = uploadRes.url;
+
+      // Update transaction
+      const res = await updateTransactionProofPayment(
+        transactionId,
+        imageUrl
+      );
+
       if (res?.ok === false || res?.status >= 400) {
         setProofError(res?.message || "Gagal mengunggah bukti pembayaran.");
         return;
       }
 
-      const updatedData = res?.data || res || transaction;
-      setTransaction(updatedData);
-      setProofMessage("Bukti pembayaran berhasil diunggah. Tunggu verifikasi admin.");
+      // Refresh transaction
+      const latest = await getTransactionById(transactionId);
+
+      const data = latest?.data || latest;
+
+      setTransaction(data);
+      setProofPreview(data?.proofPaymentUrl || imageUrl);
+      setProofFile(null);
+
+      setProofMessage(
+        "Bukti pembayaran berhasil diunggah. Tunggu verifikasi admin."
+      );
     } catch (err) {
-      console.error("Failed to upload proof payment", err);
-      setProofError("Gagal mengunggah bukti pembayaran. Coba lagi nanti.");
+      console.error(err);
+      setProofError("Gagal mengunggah bukti pembayaran.");
     } finally {
       setProofUploading(false);
     }
@@ -127,10 +142,11 @@ export default function TransactionDetailPage({ params }) {
 
   const items = useMemo(() => normalizeItems(transaction || {}), [transaction]);
   const total =
-    transaction?.totalPrice ?? transaction?.total ?? transaction?.amount ??
+    transaction?.totalAmount ?? transaction?.totalPrice ?? transaction?.total ?? transaction?.amount ??
     items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const status = transaction?.status || "pending";
-  const paymentMethod = transaction?.paymentMethod?.name || transaction?.paymentMethod || "-";
+  const paymentMethod =
+    transaction?.payment_method?.name || transaction?.paymentMethod?.name || transaction?.paymentMethod || "-";
   const createdAt = transaction?.createdAt || transaction?.created_at || transaction?.updatedAt || "-";
   const transactionId = transaction?.id || transaction?._id || transaction?.transactionId || id;
 

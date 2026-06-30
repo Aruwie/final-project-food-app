@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getCarts, updateCart, deleteCart } from "@/services/cart";
 import { getPaymentMethods } from "@/services/payment";
-import { createTransaction } from "@/services/transaction";
+import { createTransaction, getMyTransactions } from "@/services/transaction";
 import { formatRupiah } from "@/utils/formatRupiah";
 
 export default function CartPage() {
@@ -58,7 +58,13 @@ export default function CartPage() {
         quantity: item.quantity ?? item.qty ?? 1,
         name: food?.name || item.name || "Menu",
         imageUrl: food?.imageUrl || food?.image || "",
-        price: food?.price ?? item.price ?? 0,
+        price:
+        food?.price ??
+        item.food?.price ??
+        item.foodData?.price ??
+        item.price ??
+        item.unitPrice ??
+        0,
         productId: food?.id || food?._id || item.foodId,
       };
     });
@@ -113,6 +119,7 @@ export default function CartPage() {
       setMessage("Pilih metode pembayaran terlebih dahulu.");
       return;
     }
+
     if (!normalizedCarts.length) {
       setMessage("Keranjang kosong.");
       return;
@@ -120,8 +127,10 @@ export default function CartPage() {
 
     setSubmitting(true);
     setMessage("");
+
     try {
       const cartIds = normalizedCarts.map((item) => item.id).filter(Boolean);
+
       const res = await createTransaction(cartIds, selectedPayment);
 
       if (res?.ok === false || res?.status >= 400) {
@@ -130,6 +139,30 @@ export default function CartPage() {
       }
 
       await refreshCart();
+
+      try {
+        const trxRes = await getMyTransactions();
+
+        const transactions = Array.isArray(trxRes?.data)
+          ? trxRes.data
+          : [];
+
+        if (transactions.length > 0) {
+          const newestTransaction = [...transactions].sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() -
+              new Date(a.createdAt).getTime()
+          )[0];
+
+          if (newestTransaction?.id) {
+            router.push(`/transactions/${newestTransaction.id}`);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Failed to get latest transaction", err);
+      }
+
       router.push("/transactions");
     } catch (error) {
       console.error("Checkout failed", error);

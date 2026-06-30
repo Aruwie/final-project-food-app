@@ -7,6 +7,15 @@ const nextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
+
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "https://api-bootcamp.do.dibimbing.id/api/v1/:path*",
+      },
+    ];
+  }
 };
 
 export default nextConfig;

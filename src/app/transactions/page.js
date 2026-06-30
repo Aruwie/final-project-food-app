@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { getMyTransactions } from "@/services/transaction";
 import { formatRupiah } from "@/utils/formatRupiah";
@@ -10,6 +10,9 @@ export default function TransactionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const PAGE_SIZE = 5;
 
   async function loadTransactions() {
     setLoading(true);
@@ -24,7 +27,14 @@ export default function TransactionsPage() {
       }
 
       const data = res?.data || res?.transactions || res || [];
-      setTransactions(Array.isArray(data) ? data : []);
+      const sortedData = Array.isArray(data)
+        ? [...data].sort(
+            (a, b) =>
+              new Date(b.createdAt || b.created_at).getTime() -
+              new Date(a.createdAt || a.created_at).getTime()
+          )
+        : [];
+      setTransactions(sortedData);
     } catch (error) {
       console.error("Failed to load transactions", error);
       setError("Gagal memuat transaksi. Coba lagi nanti.");
@@ -55,6 +65,17 @@ export default function TransactionsPage() {
       </Link>
     </div>
   );
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(transactions.length / PAGE_SIZE)
+  );
+
+  const paginatedTransactions = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+
+    return transactions.slice(start, start + PAGE_SIZE);
+  }, [transactions, currentPage]);
 
   return (
     <main className="min-h-screen bg-[#f6fbff] p-6 text-slate-900">
@@ -87,10 +108,10 @@ export default function TransactionsPage() {
           <div className="mt-8">{emptyState}</div>
         ) : (
           <div className="mt-8 space-y-4">
-            {transactions.map((transaction) => {
-              const total = transaction.totalPrice ?? transaction.total ?? transaction.amount ?? 0;
+            {paginatedTransactions.map((transaction) => {
+              const total = transaction.totalAmount ?? transaction.totalPrice ?? transaction.total ?? transaction.amount ?? 0;
               const status = transaction.status ?? "pending";
-              const paymentMethod = transaction.paymentMethod?.name || transaction.paymentMethod || "-";
+              const paymentMethod = transaction.payment_method?.name || transaction.paymentMethod?.name || transaction.paymentMethod || "-";
               const createdAt = transaction.createdAt || transaction.created_at || transaction.updatedAt || "-";
               const transactionId = transaction.id || transaction._id || transaction.transactionId;
 
@@ -127,7 +148,38 @@ export default function TransactionsPage() {
               );
             })}
           </div>
-        )}
+          )}
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-between rounded-3xl border border-slate-200 bg-white p-4 text-sm">
+              <p className="text-slate-500">
+                Page {currentPage} of {totalPages}
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() =>
+                    setCurrentPage((page) => Math.max(1, page - 1))
+                  }
+                  disabled={currentPage === 1}
+                  className="rounded-full border border-slate-200 px-4 py-2 font-semibold disabled:opacity-50"
+                >
+                  Prev
+                </button>
+
+                <button
+                  onClick={() =>
+                    setCurrentPage((page) =>
+                      Math.min(totalPages, page + 1)
+                    )
+                  }
+                  disabled={currentPage === totalPages}
+                  className="rounded-full border border-slate-200 px-4 py-2 font-semibold disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
       </section>
     </main>
   );
