@@ -21,7 +21,7 @@ export async function createFood(foodData) {
 // UPDATE FOOD
 export async function updateFood(id, foodData) {
   return fetchAPI(`/update-food/${id}`, {
-    method: "PUT", // lebih standar daripada POST
+    method: "POST",
     body: JSON.stringify(foodData),
   });
 }
